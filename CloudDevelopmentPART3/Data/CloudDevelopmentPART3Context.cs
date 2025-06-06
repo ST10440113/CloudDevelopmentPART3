@@ -14,6 +14,7 @@ namespace CloudDevelopmentPART3.Data
         {
         }
 
+        public DbSet<CloudDevelopmentPART3.Models.EventTypeModel> EventTypeModel { get; set; } = default!;
         public DbSet<CloudDevelopmentPART3.Models.Event> Event { get; set; } = default!;
         public DbSet<CloudDevelopmentPART3.Models.Venue> Venue { get; set; } = default!;
         public DbSet<CloudDevelopmentPART3.Models.Booking> Booking { get; set; } = default!;

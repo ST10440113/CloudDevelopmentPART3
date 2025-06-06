@@ -20,35 +20,47 @@ namespace CloudDevelopmentPART3.Controllers
         }
 
         // GET: Events
-        //public async Task<IActionResult> Index()
-        //{
-        //    var cloudDevelopmentPART3Context = _context.Event.Include(@ => @.EventTypeModel);
-        //    return View(await cloudDevelopmentPART3Context.ToListAsync());
-        //}
+        public async Task<IActionResult> Index(string searchString)
+        {
+
+            if (_context.Event == null)
+            {
+                return Problem("Entity set 'CloudDevelopmentPART3Context.'  is null.");
+            }
+
+            var events = from m in _context.Event
+                         select m;
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                events = events.Where(s => s.EventName!.ToUpper().Contains(searchString.ToUpper()));
+            }
+
+
+            return View(await events.ToListAsync());
+        }
 
         // GET: Events/Details/5
-        //public async Task<IActionResult> Details(int? id)
-        //{
-        //    if (id == null)
-        //    {
-        //        return NotFound();
-        //    }
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
 
-        //    var @event = await _context.Event
-        //        .Include(@ => @.EventTypeModel)
-        //        .FirstOrDefaultAsync(m => m.EventId == id);
-        //    if (@event == null)
-        //    {
-        //        return NotFound();
-        //    }
+            var @event = await _context.Event
+                .FirstOrDefaultAsync(m => m.EventId == id);
+            if (@event == null)
+            {
+                return NotFound();
+            }
 
-        //    return View(@event);
-        //}
+            return View(@event);
+        }
 
         // GET: Events/Create
         public IActionResult Create()
         {
-            ViewData["EventTypeId"] = new SelectList(_context.Set<EventTypeModel>(), "EventTypeId", "EventTypeId");
             return View();
         }
 
@@ -57,7 +69,7 @@ namespace CloudDevelopmentPART3.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("EventId,EventName,Description,EventDate,EventTypeId")] Event @event)
+        public async Task<IActionResult> Create([Bind("EventName,Description,EventDate")] Event @event)
         {
             if (ModelState.IsValid)
             {
@@ -65,24 +77,19 @@ namespace CloudDevelopmentPART3.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["EventTypeId"] = new SelectList(_context.Set<EventTypeModel>(), "EventTypeId", "EventTypeId", @event.EventTypeId);
             return View(@event);
         }
 
         // GET: Events/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+
 
             var @event = await _context.Event.FindAsync(id);
             if (@event == null)
             {
                 return NotFound();
             }
-            ViewData["EventTypeId"] = new SelectList(_context.Set<EventTypeModel>(), "EventTypeId", "EventTypeId", @event.EventTypeId);
             return View(@event);
         }
 
@@ -91,7 +98,7 @@ namespace CloudDevelopmentPART3.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("EventId,EventName,Description,EventDate,EventTypeId")] Event @event)
+        public async Task<IActionResult> Edit(int id, [Bind("EventId,EventName,Description,EventDate")] Event @event)
         {
             if (id != @event.EventId)
             {
@@ -118,40 +125,46 @@ namespace CloudDevelopmentPART3.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["EventTypeId"] = new SelectList(_context.Set<EventTypeModel>(), "EventTypeId", "EventTypeId", @event.EventTypeId);
             return View(@event);
         }
 
         // GET: Events/Delete/5
-        //public async Task<IActionResult> Delete(int? id)
-        //{
-        //    if (id == null)
-        //    {
-        //        return NotFound();
-        //    }
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
 
-        //    var @event = await _context.Event
-        //        .Include(@ => @.EventTypeModel)
-        //        .FirstOrDefaultAsync(m => m.EventId == id);
-        //    if (@event == null)
-        //    {
-        //        return NotFound();
-        //    }
+            var @event = await _context.Event
+                .FirstOrDefaultAsync(m => m.EventId == id);
+            if (@event == null)
+            {
+                return NotFound();
+            }
 
-        //    return View(@event);
-        //}
+            return View(@event);
+        }
 
         // POST: Events/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var @event = await _context.Event.FindAsync(id);
-            if (@event != null)
+            bool isBookingExists = await _context.Booking.AnyAsync(b => b.EventId == id);
+
+
+            // Check if there are any bookings associated with the event
+            if (isBookingExists)
             {
-                _context.Event.Remove(@event);
+                var @event = await _context.Event.FindAsync(id);
+                ModelState.AddModelError("", "Cannot delete event as it has associated bookings.");
+                return View(@event);
             }
 
+            var eventToDelete = await _context.Event.FindAsync(id);
+
+            _context.Event.Remove(eventToDelete);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
@@ -160,5 +173,11 @@ namespace CloudDevelopmentPART3.Controllers
         {
             return _context.Event.Any(e => e.EventId == id);
         }
+
+
     }
 }
+//var events = await _context.Event
+//                .Where(e => e.EventDate >= start && e.EventDate <= end)
+//                .ToListAsync();
+//return events.Any();
