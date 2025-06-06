@@ -1,24 +1,30 @@
 ﻿@model CloudDevelopmentPART3.Models.Booking
-
+@Html.ValidationSummary(true, "", new { @class = "text-danger" })
 @{
     ViewData["Title"] = "Create";
 }
 
-<h1>Create</h1>
+<h1>Create New Booking</h1>
 
-<h4>Booking</h4>
+
 <hr />
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="EventId" class="control-label"></label>
-                <select asp-for="EventId" class ="form-control" asp-items="ViewBag.EventId"></select>
+                <label asp-for="Event.EventName" class="control-label"></label>
+                <select asp-for="EventId" asp-items="@ViewBag.EventList" class="form-select">
+                    <option disabled selected>Select Event</option>
+                </select>
+                <span asp-validation-for="EventId" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="VenueId" class="control-label"></label>
-                <select asp-for="VenueId" class ="form-control" asp-items="ViewBag.VenueId"></select>
+                <label asp-for="Venue.VenueName" class="control-label"></label>
+                <select asp-for="VenueId" asp-items="@ViewBag.VenueList" class="form-select">
+                    <option disabled selected>Select Venue</option>
+                </select>
+                <span asp-validation-for="VenueId" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="BookingStartDate" class="control-label"></label>
@@ -31,16 +37,19 @@
                 <span asp-validation-for="BookingEndDate" class="text-danger"></span>
             </div>
             <div class="form-group">
+                <br />
                 <input type="submit" value="Create" class="btn btn-primary" />
+                <a class="btn btn-primary " asp-controller="Bookings" asp-action="Index"> Back to List </a>
             </div>
         </form>
     </div>
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }
