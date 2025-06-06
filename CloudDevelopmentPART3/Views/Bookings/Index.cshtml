@@ -1,53 +1,39 @@
 ﻿@model IEnumerable<CloudDevelopmentPART3.Models.Booking>
 
+
 @{
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<h1>Bookings</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+
+    <a class="btn btn-primary " asp-controller="Bookings" asp-action="Create"> Create New Booking </a>
 </p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Event)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Venue)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.BookingStartDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.BookingEndDate)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Event.EventId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Venue.VenueId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.BookingStartDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.BookingEndDate)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.BookingId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.BookingId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.BookingId">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+
+
+<div class="container mt-3">
+    <div class="row">
+        @foreach (var item in Model)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <p class="card-title">Event Name: @item.Event.EventName</p>
+                        <p class="card-text">Venue Name: @item.Venue.VenueName</p>
+                        <p class="card-text">Booking Start Date: @item.BookingStartDate.ToString("dd/MM/yyyy")</p>
+                        <p class="card-text">Booking End Date: @item.BookingEndDate.ToString("dd/MM/yyyy")</p>
+
+
+                        <br>
+                        <br>
+                        <a class="btn btn-primary" asp-controller="Bookings" asp-action="Edit" asp-route-id="@item.BookingId">Edit</a>
+                        <a class="btn btn-secondary" asp-controller="Bookings" asp-action="Details" asp-route-id="@item.BookingId">Details</a>
+                        <a class="btn btn-danger" asp-controller="Bookings" asp-action="Delete" asp-route-id="@item.BookingId">Delete</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
