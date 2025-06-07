@@ -134,7 +134,7 @@ namespace CloudDevelopmentPART3.Controllers
             }
 
             var @event = await _context.Event
-                .FirstOrDefaultAsync(m => m.EventId == id);
+               .Include(b => b.EventTypeModel).FirstOrDefaultAsync(m => m.EventId == id);
             if (@event == null)
             {
                 return NotFound();
