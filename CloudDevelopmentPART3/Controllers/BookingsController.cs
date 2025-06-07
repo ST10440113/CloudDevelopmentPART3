@@ -58,18 +58,23 @@ namespace CloudDevelopmentPART3.Controllers
         }
 
 
-        public async Task<IActionResult> EnhancedBookingView(string searchString)
+        public async Task<IActionResult> EnhancedBookingView(string searchString, string Type)
         {
             var bookingList = _context.Booking.ToList();
             foreach (var booking in bookingList)
             {
                 booking.Event = _context.Event.FirstOrDefault(e => e.EventId == booking.EventId);
                 booking.Venue = _context.Venue.FirstOrDefault(v => v.VenueId == booking.VenueId);
+                booking.Event.EventTypeModel = _context.EventTypeModel.FirstOrDefault(et => et.EventTypeId == booking.Event.EventTypeId);
             }
             if (_context.Booking == null)
             {
                 return Problem("Entity set 'CLDV6211_POE_PartThreeContext.'  is null.");
             }
+
+            IQueryable<string> eventTypeQuery = from m in _context.EventTypeModel
+                                                orderby m.EventType
+                                                select m.EventType;
 
             var bookings = from m in _context.Booking
                            select m;
@@ -79,8 +84,21 @@ namespace CloudDevelopmentPART3.Controllers
                 bookings = bookings.Where(s => s.Event.EventName!.ToUpper().Contains(searchString.ToUpper()));
             }
 
+            if (!string.IsNullOrEmpty(Type))
+            {
+                bookings = bookings.Where(x => x.Event.EventTypeModel.EventType == Type);
+            }
 
-            return View(await bookings.ToListAsync());
+
+            var enhancedBookingVM = new EnhancedBookingViewModel
+            {
+                EventTypes = new SelectList(await eventTypeQuery.Distinct().ToListAsync()),
+                Bookings = await bookings.ToListAsync()
+
+            };
+
+            return View(enhancedBookingVM);
+
         }
 
 

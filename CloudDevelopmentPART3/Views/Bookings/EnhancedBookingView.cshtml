@@ -1,4 +1,4 @@
-﻿@model IEnumerable<CloudDevelopmentPART3.Models.Booking>
+﻿@model CloudDevelopmentPART3.Models.EnhancedBookingViewModel
 
 @{
     ViewData["Title"] = "EnhancedBookingView";
@@ -7,45 +7,54 @@
 <h1>Filter Bookings</h1>
 
 <p>
-    <form asp-controller="Bookings" asp-action="EnhancedBookingView">
-        <label>
-            Name of Booked Event: <input type="text" name="SearchString" />
-        </label>
-        <input type="submit" value="Filter" />
+    <form asp-action="EnhancedBookingView" method="get">
+        <select asp-for="Type" asp-items="Model.EventTypes">
+            <option value="">All</option>
+        </select>
+        <button type="submit">Filter</button>
+
+        <input type="text" asp-for="SearchString" />
+        <button type="submit">Search</button>
     </form>
+
+
+
 </p>
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Event.EventName)
+                @Html.DisplayNameFor(model => model.Bookings![0].Event.EventName)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Event.Description)
+                @Html.DisplayNameFor(model => model.Bookings![0].Event.Description)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Event.EventDate)
+                @Html.DisplayNameFor(model => model.Bookings![0].Event.EventDate)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Venue.VenueName)
+                @Html.DisplayNameFor(model => model.Bookings![0].Event.EventTypeModel.EventType)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Venue.Location)
+                @Html.DisplayNameFor(model => model.Bookings![0].Venue.VenueName)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Venue.Capacity)
+                @Html.DisplayNameFor(model => model.Bookings![0].Venue.Location)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.BookingStartDate)
+                @Html.DisplayNameFor(model => model.Bookings![0].Venue.Capacity)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.BookingEndDate)
+                @Html.DisplayNameFor(model => model.Bookings![0].BookingStartDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Bookings![0].BookingEndDate)
             </th>
 
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model)
+        @foreach (var item in Model.Bookings!)
         {
             <tr>
                 <td>
@@ -56,6 +65,9 @@
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Event.EventDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Event.EventTypeModel.EventType)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Venue.VenueName)
