@@ -1,42 +1,38 @@
 ﻿@model CloudDevelopmentPART3.Models.Event
 
+
 @{
     ViewData["Title"] = "Details";
 }
 
-<h1>Details</h1>
+<h1>Event Details</h1>
 
 <div>
-    <h4>Event</h4>
+
     <hr />
     <dl class="row">
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.EventName)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.EventName)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Description)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Description)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.EventDate)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.EventDate)
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.EventTypeModel)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.EventTypeModel.EventTypeId)
-        </dd>
+
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model?.EventId">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <a class="btn btn-primary btn-sm" asp-controller="Events" asp-action="Edit" asp-route-id="@Model?.EventId">Edit</a>
+    <a class="btn btn-primary btn-sm " asp-controller="Events" asp-action="Index"> Back to List </a>
 </div>
