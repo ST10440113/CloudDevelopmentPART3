@@ -20,24 +20,16 @@ namespace CloudDevelopmentPART3.Controllers
         }
 
         // GET: Events
-        public async Task<IActionResult> Index(string searchString)
+        public async Task<IActionResult> Index()
         {
 
-            if (_context.Event == null)
+            var eventsList = _context.Event.ToList();
+            foreach (var events in eventsList)
             {
-                return Problem("Entity set 'CloudDevelopmentPART3Context.'  is null.");
+                events.EventTypeModel = _context.EventTypeModel.FirstOrDefault(e => e.EventTypeId == events.EventTypeId);
+
             }
-
-            var events = from m in _context.Event
-                         select m;
-
-            if (!String.IsNullOrEmpty(searchString))
-            {
-                events = events.Where(s => s.EventName!.ToUpper().Contains(searchString.ToUpper()));
-            }
-
-
-            return View(await events.ToListAsync());
+            return View(await _context.Event.ToListAsync());
         }
 
         // GET: Events/Details/5
@@ -49,7 +41,7 @@ namespace CloudDevelopmentPART3.Controllers
             }
 
             var @event = await _context.Event
-                .FirstOrDefaultAsync(m => m.EventId == id);
+               .Include(b => b.EventTypeModel).FirstOrDefaultAsync(m => m.EventId == id);
             if (@event == null)
             {
                 return NotFound();
@@ -61,6 +53,7 @@ namespace CloudDevelopmentPART3.Controllers
         // GET: Events/Create
         public IActionResult Create()
         {
+            PopulateEventTypeList();
             return View();
         }
 
@@ -69,27 +62,31 @@ namespace CloudDevelopmentPART3.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("EventName,Description,EventDate")] Event @event)
+        public async Task<IActionResult> Create([Bind("EventName,Description,EventDate,EventTypeId")] Event @event)
         {
+            PopulateEventTypeList();
+
+            var @eventType = await _context.EventTypeModel.FindAsync(@event.EventTypeId);
+
             if (ModelState.IsValid)
             {
                 _context.Add(@event);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["EventTypeId"] = new SelectList(_context.EventTypeModel, "EventTypeId", "EventType", @event.EventTypeId);
             return View(@event);
         }
 
         // GET: Events/Edit/5
         public async Task<IActionResult> Edit(int id)
         {
-
-
             var @event = await _context.Event.FindAsync(id);
             if (@event == null)
             {
                 return NotFound();
             }
+            PopulateEventTypeList();
             return View(@event);
         }
 
@@ -98,7 +95,7 @@ namespace CloudDevelopmentPART3.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("EventId,EventName,Description,EventDate")] Event @event)
+        public async Task<IActionResult> Edit(int id, [Bind("EventId,EventName,Description,EventDate,EventTypeId")] Event @event)
         {
             if (id != @event.EventId)
             {
@@ -174,6 +171,18 @@ namespace CloudDevelopmentPART3.Controllers
             return _context.Event.Any(e => e.EventId == id);
         }
 
+        public void PopulateEventTypeList()
+        {
+
+
+            IQueryable<string> eventTypeQuery = from m in _context.EventTypeModel
+                                                orderby m.EventType
+                                                select m.EventType;
+
+            ViewBag.EventTypeList = new SelectList(_context.EventTypeModel, "EventTypeId", "EventType");
+
+
+        }
 
     }
 }
