@@ -4,50 +4,34 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<h1>Events</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+
+    <a class="btn btn-primary " asp-controller="Events" asp-action="Create"> Create New Event </a>
 </p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.EventName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Description)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.EventDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.EventTypeModel)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.EventName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.EventDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.EventTypeModel.EventTypeId)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.EventId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.EventId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.EventId">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+
+
+<div class="container mt-3">
+    <div class="row">
+        @foreach (var item in Model)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">@item.EventName</h5>
+                        <p class="card-text">Description: @item.Description</p>
+                        <p class="card-text">Event Date: @item.EventDate.ToString("dd/MM/yyyy")</p>
+
+
+                        <br>
+                        <br>
+                        <a class="btn btn-primary" asp-controller="Events" asp-action="Edit" asp-route-id="@item.EventId">Edit</a>
+                        <a class="btn btn-secondary" asp-controller="Events" asp-action="Details" asp-route-id="@item.EventId">Details</a>
+                        <a class="btn btn-danger" asp-controller="Events" asp-action="Delete" asp-route-id="@item.EventId">Delete</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
