@@ -5,13 +5,13 @@
 }
 
 <h1>Check For Available Venues </h1>
-
+ 
 <form asp-controller="Bookings" asp-action="FilterVenuesView" method="get">
     <label> Start Date: <input type="date" name="startDate" required /></label>
     <label> End Date: <input type="date" name="endDate" required /></label>
     <input type="submit" value="Filter" />
 </form>
-
+<br />
 <table class="table">
     <thead>
         <tr>
