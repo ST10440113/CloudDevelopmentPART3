@@ -101,6 +101,26 @@ namespace CloudDevelopmentPART3.Controllers
 
         }
 
+        public async Task<IActionResult> FilterVenuesView(DateTime? startDate, DateTime? endDate)
+        {
+
+            var venues = await _context.Venue.ToListAsync();
+
+
+            var bookedVenuesInRange = await _context.Booking
+                .Where(b => b.BookingStartDate <= endDate && b.BookingEndDate >= startDate)
+                .Select(b => b.VenueId)
+                .ToListAsync();
+
+
+            var availableVenues = venues
+                .Where(v => !bookedVenuesInRange.Contains(v.VenueId))
+                .ToList();
+
+
+            return View(availableVenues);
+        }
+
 
         // GET: Bookings/Details/5
         public async Task<IActionResult> Details(int? id)
