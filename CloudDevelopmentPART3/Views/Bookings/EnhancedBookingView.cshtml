@@ -8,12 +8,12 @@
 
 <p>
     <form asp-action="EnhancedBookingView" method="get">
-        <select asp-for="Type" asp-items="Model.EventTypes">
+        <label>Select Event Type</label><select asp-for="Type" asp-items="Model.EventTypes">
             <option value="">All</option>
         </select>
         <button type="submit">Filter</button>
 
-        <input type="text" asp-for="SearchString" />
+        <label>Booked Event Name:</label><input type="text" asp-for="SearchString" />
         <button type="submit">Search</button>
     </form>
 
